@@ -181,9 +181,9 @@ class autocached(object):
     def __call__(self, method):
         @functools.wraps(method)
         def wrapper(cls, *args):
-            key = self.prefix
+            key = options.site_cache_prefix+self.prefix
             if args:
-                key = self.prefix +  '-'.join(map(str, args))
+                key = options.site_cache_prefix+self.prefix +  '-'.join(map(str, args))
             # else:
             #     key = self.prefix
             value = complex_cache.get(key)
@@ -200,6 +200,7 @@ class autocached(object):
 
 def autocached_clear(key):
     logging.debug("complex_cache delete from cache", key)
+    key = options.site_cache_prefix + key
     complex_cache.delete(key)
     # if isinstance(key, list):
     #     for k in key:
@@ -207,14 +208,27 @@ def autocached_clear(key):
     # else:
     #     complex_cache.delete(key)
 
-def complex_cache_del(key_pattern):
+def autocache_del(key_pattern):
     logging.debug("complex_cache delete pattern from cache", key_pattern)
-    keys = complex_cache.keys(key_pattern)
+    keys = complex_cache.keys(options.site_cache_prefix+key_pattern)
     if keys:
         for key in keys:
             complex_cache.delete(key)
     else:
         logging.debug("del pattern keys is none")
+
+
+def autocache_get(key):
+    return complex_cache.get(options.site_cache_prefix+key)
+
+def autocache_set(key, value, time):
+    complex_cache.set(options.site_cache_prefix+key, value, time)
+
+def autocache_incr(key, value):
+    complex_cache.incr(options.site_cache_prefix+key, value)
+
+def autocache_hdel(key, id):
+    complex_cache.hdel(options.site_cache_prefix+key, id)
 
 def get_simple_cache_list(model, id_list, key_prefix, time=600, site_prefix=None):
     if site_prefix is None:
@@ -248,7 +262,7 @@ def get_cache_list(model, id_list, key_hash, time=600, site_prefix=None):
     # str_id_list = complex_cache.hkeys('people')
     # print str_id_list
     if len(int_id_list)>0:
-        data = complex_cache.hmget(key_hash, int_id_list)
+        data = complex_cache.hmget(site_prefix+key_hash, int_id_list)
         # return data
         # id_list = set(id_list)
         
@@ -269,6 +283,6 @@ def get_cache_list(model, id_list, key_hash, time=600, site_prefix=None):
             # print "item id", item.id
             dct[item.id] = cPickle.dumps(item)
             data_dict[item.id] = item
-        complex_cache.hmset(key_hash, dct)
+        complex_cache.hmset(site_prefix+key_hash, dct)
 
     return data_dict
