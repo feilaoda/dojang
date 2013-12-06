@@ -225,7 +225,7 @@ def autocache_set(key, value, time):
     complex_cache.set(options.site_cache_prefix+key, value, time)
 
 def autocache_incr(key, value):
-    complex_cache.incr(options.site_cache_prefix+key, value)
+    return complex_cache.incr(options.site_cache_prefix+key, value)
 
 def autocache_hdel(key, id):
     complex_cache.hdel(options.site_cache_prefix+key, id)
