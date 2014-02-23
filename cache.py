@@ -1,8 +1,11 @@
-import functools
-from time import time as sys_time
-from tornado.options import options
 import cPickle
+import functools
 import logging
+from time import time as sys_time
+
+from tornado.options import options
+
+
 __all__ = ['cached', 'autocache']
 
 

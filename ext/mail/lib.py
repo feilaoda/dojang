@@ -2,14 +2,16 @@
 # -*- coding: utf-8 -*-
 
 from datetime import datetime, timedelta
-import logging
-import smtplib
 from email.mime.text import MIMEText
 from email.utils import formatdate, parseaddr
+import logging
+import smtplib
+
+from dojang.util import set_default_option
 from tornado.escape import utf8
 from tornado.options import options
 
-from dojang.util import set_default_option
+
 set_default_option('smtp_user', 'root@localhost')
 set_default_option('smtp_password', '')
 set_default_option('smtp_host', 'localhost')

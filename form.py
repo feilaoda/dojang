@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
 import re
 import urlparse
-import formencode
+
 from formencode import htmlfill, validators
+import formencode
+
 
 class FormSchema(formencode.Schema):
     allow_extra_fields = True

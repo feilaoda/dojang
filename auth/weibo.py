@@ -1,10 +1,10 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-import logging
-import urllib
-import mimetools
 import itertools
+import logging
+import mimetools
+import urllib
 
 from tornado import escape
 from tornado.auth import httpclient, OAuth2Mixin

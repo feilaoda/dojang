@@ -1,9 +1,11 @@
 # -*- coding: utf-8 -*-
 
 import logging
-from tornado.web import URLSpec as url
-from dojang.web import DojangHandler
+
 from dojang.app import DojangApp
+from dojang.web import DojangHandler
+from tornado.web import URLSpec as url
+
 from .lib import send_mail
 
 

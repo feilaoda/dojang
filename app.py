@@ -1,8 +1,9 @@
+import logging
 import os.path
 import re
-import logging
-from tornado.web import Application, URLSpec
+
 from dojang.template import DojangLoader
+from tornado.web import Application, URLSpec
 from tornado.wsgi import WSGIApplication
 
 from .util import get_root_path, import_object, ObjectDict

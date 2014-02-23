@@ -1,12 +1,15 @@
 from __future__ import with_statement
-import os
-import sys
-import pkgutil
-import md5
+
 import json
+import md5
+import os
+import pkgutil
 from random import choice
+import sys
+
 from tornado.options import define, options
 from tornado.util import exec_in
+
 
 def set_default_option(name, default=None, **kwargs):
     if name in options:

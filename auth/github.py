@@ -10,12 +10,14 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-import urllib
 import logging
-import tornado.auth
-from tornado import httpclient
+import urllib
+
 from tornado import escape
+from tornado import httpclient
+import tornado.auth
 from tornado.options import options
+
 
 class GithubMixin(tornado.auth.OAuth2Mixin):
 

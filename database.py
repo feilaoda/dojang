@@ -10,27 +10,30 @@
 #: modified and extended by lepture
 
 from __future__ import with_statement, absolute_import
+
+from functools import partial
+import functools
 import re
 import uuid
-import functools
-from functools import partial
-import sqlalchemy
+
 from sqlalchemy import orm
-from sqlalchemy.orm.session import Session
+import sqlalchemy
+from sqlalchemy.ext.declarative import declarative_base, DeclarativeMeta
 from sqlalchemy.orm import attributes, object_mapper
 from sqlalchemy.orm import joinedload, joinedload_all
-from sqlalchemy.orm.properties import RelationshipProperty
-from sqlalchemy.orm.interfaces import MapperExtension, SessionExtension, EXT_CONTINUE
 from sqlalchemy.orm.exc import UnmappedClassError
+from sqlalchemy.orm.interfaces import MapperExtension, SessionExtension, EXT_CONTINUE
+from sqlalchemy.orm.properties import RelationshipProperty
+from sqlalchemy.orm.session import Session
 from sqlalchemy.orm.util import _entity_descriptor
 from sqlalchemy.sql import operators, extract
-from sqlalchemy.ext.declarative import declarative_base, DeclarativeMeta
 from sqlalchemy.util import to_list
+from tornado.options import options
+import tornado.web
+
 from .signals import Namespace
 from .util import set_default_option
 
-import tornado.web
-from tornado.options import options
 
 _camelcase_re = re.compile(r'([A-Z]+)(?=[a-z0-9])')
 _signals = Namespace()

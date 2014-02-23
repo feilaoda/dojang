@@ -30,13 +30,13 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
-import re
 import logging
+import re
 import urllib
 
+from tornado.auth import httpclient, OAuthMixin
 from tornado.escape import xhtml_escape
 from tornado.httputil import url_concat
-from tornado.auth import httpclient, OAuthMixin
 from tornado.options import options
 
 

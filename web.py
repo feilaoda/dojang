@@ -1,17 +1,16 @@
 import re
-from tornado import web, escape
-from tornado.options import options
-from tornado import locale
 
 import oauth 
-
 from sqlalchemy.exc import SQLAlchemyError
+from tornado import locale
+from tornado import web, escape
+from tornado.options import options
+
+from .useragent import search_ua_strings
+from .util import set_default_option
+
 
 #: initialize options
-from .util import set_default_option
-from .useragent import search_ua_strings
-
-
 __all__ = ["DojangHandler", "ApiHandler", "init_options", "run_server"]
 
 def ignore_user_agent(user_agent):

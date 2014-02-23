@@ -23,13 +23,16 @@ THE SOFTWARE.
 """
 
 import base64
-import urllib
-import time
-import random
-import urlparse
-import hmac
 import binascii
+import hmac
+import random
+import time
+import urllib
+import urlparse
+
+import _version
 import httplib2
+
 
 try:
     from urlparse import parse_qs
@@ -45,7 +48,6 @@ except ImportError:
     # hashlib was added in Python 2.5
     import sha
 
-import _version
 
 __version__ = _version.__version__
 

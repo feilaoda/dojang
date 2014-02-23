@@ -22,8 +22,9 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 """
 
-import oauth2
 import imaplib
+
+import oauth2
 
 
 class IMAP4_SSL(imaplib.IMAP4_SSL):

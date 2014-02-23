@@ -1,10 +1,11 @@
 #!/usr/bin/env python
 
+import hashlib
 import logging
 import urllib
-import hashlib
-from tornado import httpclient
+
 from tornado import gen
+from tornado import httpclient
 from tornado.escape import json_decode
 from tornado.httputil import url_concat
 
