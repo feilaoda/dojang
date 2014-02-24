@@ -103,3 +103,10 @@ def json_loads(res):
 
 def json_dumps(res):
     return json.dumps(res)
+
+def safe_cast(val, to_type, default=None):
+    try:
+        return to_type(val)
+    except ValueError:
+        return default
+      
