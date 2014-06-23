@@ -233,6 +233,13 @@ def autocache_incr(key, value):
 def autocache_hdel(key, id):
     complex_cache.hdel(options.site_cache_prefix+key, id)
 
+def autocache_hget(key, id):
+    complex_cache.hget(options.site_cache_prefix+key, id)
+
+def autocache_hset(key, id):
+    complex_cache.hset(options.site_cache_prefix+key, id)
+
+
 def get_simple_cache_list(model, id_list, key_prefix, time=600, site_prefix=None):
     if site_prefix is None:
         site_prefix = options.site_cache_prefix
