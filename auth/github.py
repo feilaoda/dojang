@@ -74,8 +74,8 @@ class GithubMixin(tornado.auth.OAuth2Mixin):
         callback({
             "id": user["id"],
             "login": user["login"],
-            # "name": user["name"],
-            "email": user["email"],
+            "name": user.get("name"),
+            "email": user.get("email"),
             "access_token": session["access_token"],
         })
  

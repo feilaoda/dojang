@@ -201,7 +201,7 @@ class autocached(object):
             return value
         return wrapper
 
-def autocached_clear(key):
+def autocache_del(key):
     logging.debug("complex_cache delete from cache", key)
     key = options.site_cache_prefix + key
     complex_cache.delete(key)
@@ -211,7 +211,7 @@ def autocached_clear(key):
     # else:
     #     complex_cache.delete(key)
 
-def autocache_del(key_pattern):
+def autocache_del_pattern(key_pattern):
     logging.debug("complex_cache delete pattern from cache", key_pattern)
     keys = complex_cache.keys(options.site_cache_prefix+key_pattern)
     if keys:
@@ -226,6 +226,8 @@ def autocache_get(key):
 
 def autocache_set(key, value, time):
     complex_cache.set(options.site_cache_prefix+key, value, time)
+
+
 
 def autocache_incr(key, value):
     return complex_cache.incr(options.site_cache_prefix+key, value)
