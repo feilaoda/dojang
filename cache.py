@@ -236,8 +236,8 @@ def autocache_hdel(key, id):
     complex_cache.hdel(options.site_cache_prefix+key, id)
 
 def autocache_hget(key, id):
-    complex_cache.hget(options.site_cache_prefix+key, id)
-
+    return complex_cache.hget(options.site_cache_prefix+key, id)
+    
 def autocache_hset(key, id):
     complex_cache.hset(options.site_cache_prefix+key, id)
 
