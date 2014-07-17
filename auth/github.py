@@ -7,8 +7,131 @@ import tornado.escape
 import tornado.httputil
 import logging
  
+
+import functools
+
+from tornado.concurrent import TracebackFuture, chain_future, return_future
+from tornado import httpclient
+from tornado import escape
+from tornado.auth import _auth_return_future, AuthError,OAuth2Mixin
+
+try:
+    import urlparse  # py2
+except ImportError:
+    import urllib.parse as urlparse  # py3
+
+try:
+    import urllib.parse as urllib_parse  # py3
+except ImportError:
+    import urllib as urllib_parse  # py2
+
+
+
+class GithubOAuth2Mixin(tornado.auth.OAuth2Mixin):
+    
+    _OAUTH_AUTHORIZE_URL = 'https://github.com/login/oauth/authorize'
+    _OAUTH_ACCESS_TOKEN_URL = 'https://github.com/login/oauth/access_token'
+    _API_URL = 'https://api.github.com'
+
+    _OAUTH_NO_CALLBACKS = False
+    _OAUTH_SETTINGS_KEY = 'google_oauth'
+
+    @_auth_return_future
+    def get_authenticated_user(self, redirect_uri, client_id, client_secret, code, callback):
+        """Handles the login for the Google user, returning a user object.
+
+        Example usage::
+
+            class GoogleOAuth2LoginHandler(tornado.web.RequestHandler,
+                                           tornado.auth.GoogleOAuth2Mixin):
+                @tornado.gen.coroutine
+                def get(self):
+                    if self.get_argument('code', False):
+                        user = yield self.get_authenticated_user(
+                            redirect_uri='http://your.site.com/auth/google',
+                            code=self.get_argument('code'))
+                        # Save the user with e.g. set_secure_cookie
+                    else:
+                        yield self.authorize_redirect(
+                            redirect_uri='http://your.site.com/auth/google',
+                            client_id=self.settings['google_oauth']['key'],
+                            scope=['profile', 'email'],
+                            response_type='code',
+                            extra_params={'approval_prompt': 'auto'})
+        """
+        http = self.get_auth_http_client()
+        body = urllib_parse.urlencode({
+            "redirect_uri": redirect_uri,
+            "code": code,
+            "client_id": client_id, #self.settings[self._OAUTH_SETTINGS_KEY]['key'],
+            "client_secret": client_secret,#self.settings[self._OAUTH_SETTINGS_KEY]['secret'],
+            "grant_type": "authorization_code",
+        })
+
+        http.fetch(self._OAUTH_ACCESS_TOKEN_URL,
+                   functools.partial(self._on_access_token, callback),
+                   method="POST", headers={'Content-Type': 'application/x-www-form-urlencoded'}, body=body)
+
+    def _on_access_token(self, future, response):
+        """Callback function for the exchange to the access token."""
+        if response.error:
+            future.set_exception(AuthError('Github auth error: %s' % str(response)))
+            return
+        
+        args = tornado.escape.parse_qs_bytes(
+                tornado.escape.native_str(response.body))
+
+        future.set_result(args)
+
+    @_auth_return_future
+    def github_getuser(self, path, callback, access_token=None,
+                method='GET', body=None, **args):
+        """ Makes a github API request, hands callback the parsed data """
+        args["access_token"] = access_token
+        url = tornado.httputil.url_concat(self._API_URL + path, args)
+        logging.debug('request to ' + url)
+        # http = tornado.httpclient.AsyncHTTPClient()
+        http = self.get_auth_http_client()
+        if body is not None:
+            body = tornado.escape.json_encode(body)
+            logging.debug('body is' +  body)
+        headers = {}
+        headers['User-Agent'] = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/35.0.1916.153 Safari/537.36'
+            
+        http.fetch(url, functools.partial(self._parse_response, callback), method=method, body=body, headers=headers)
+        
+    def _parse_response(self, future, response):
+        """ Parse the JSON from the API """
+        if response.error:
+            logging.warning("HTTP error from Github get user: %s", response.error)
+            future.set_exception(AuthError('Github auth get user info error: %s' % str(response)))
+            return
+        try:
+            json = tornado.escape.json_decode(response.body)
+        except Exception:
+            logging.warning("Invalid JSON from Github: %r", response.body)
+            future.set_exception(AuthError('Invalid JSON from Github: %s' % str(response)))
+            return
+
+        if isinstance(json, dict) and json.get("error_code"):
+            logging.warning("Github error: %d: %r", json["error_code"],
+                            json.get("error_msg"))
+            future.set_exception(AuthError("Github error: %d: %r" % ( json["error_code"],
+                            json.get("error_msg")) ) )
+            return
+        future.set_result(json)
+        
+
+    def get_auth_http_client(self):
+        """Returns the `.AsyncHTTPClient` instance to be used for auth requests.
+
+        May be overridden by subclasses to use an HTTP client other than
+        the default.
+        """
+        return httpclient.AsyncHTTPClient()
+
  
-class GithubMixin(tornado.auth.OAuth2Mixin):
+class GithubMixin(OAuth2Mixin):
     """ Github OAuth Mixin, based on FacebookGraphMixin
     """
  
