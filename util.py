@@ -94,6 +94,13 @@ def to_md5(url):
     url_md5 = m.hexdigest()
     return url_md5 
 
+def string2int(s, default=0):
+    try:
+        return int(s)
+    except ValueError, error:
+        pass
+    return default
+    
 
 def json_loads(res):
     if res:
