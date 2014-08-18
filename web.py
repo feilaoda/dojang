@@ -120,8 +120,10 @@ class DojangHandler(web.RequestHandler):
 
         #: add application global variables
         if '__dojang_global__' in self.settings:
-            assert "g" not in kwargs, "g is a reserved keyword."
+            assert "site" not in kwargs, "g is a reserved keyword."
             kwargs["g"] = self.settings['__dojang_global__']
+            kwargs["site"] = self.settings['__dojang_global__']
+            
         kwargs['is_mobile'] = self.is_mobile()
         #: flash message support
         kwargs['messages'] = self.messages

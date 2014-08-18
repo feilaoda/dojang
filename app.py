@@ -115,8 +115,12 @@ class DojangApplication(object):
             query_prefix = None
         self._register_app_handlers(app, host_pattern, query_prefix)
 
-    def register_app(self, app):
-        self._register_app_handlers(app)
+    def register_app(self, app, host_pattern=None):
+        if host_pattern:
+            if not host_pattern.endswith("$"):
+                host_pattern = host_pattern + "$"
+            
+        self._register_app_handlers(app, host_pattern)
         
     def _register_app_handlers(self, app, host_pattern=None, query_prefix=None):
         if isinstance(app, str):
