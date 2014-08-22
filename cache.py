@@ -145,7 +145,7 @@ class _Cache(object):
 
 simple_cache = _Cache.create_memcache()
 complex_cache =_Cache.create_redis()
-
+redis_cache = complex_cache
 
 
 class cached(object):
@@ -224,9 +224,11 @@ def autocache_del_pattern(key_pattern):
 def autocache_get(key):
     return complex_cache.get(options.site_cache_prefix+key)
 
-def autocache_set(key, value, time):
+def autocache_set(key, value, time=0):
     complex_cache.set(options.site_cache_prefix+key, value, time)
 
+def autocache_mget(keys):
+    return complex_cache.mget(keys)
 
 
 def autocache_incr(key, value):
@@ -240,6 +242,13 @@ def autocache_hget(key, id):
     
 def autocache_hset(key, id):
     complex_cache.hset(options.site_cache_prefix+key, id)
+
+def autocache_zadd(key, value, score):
+    complex_cache.zadd(options.site_cache_prefix+key,  str(value), score)
+
+def autocache_zrange(key, start, end):
+    return complex_cache.zrange(options.site_cache_prefix+key, start, end)
+
 
 
 def get_simple_cache_list(model, id_list, key_prefix, time=600, site_prefix=None):

@@ -227,21 +227,22 @@ class Pagination(object):
     def __name__(self):
         return "pagination"
 
-    def __init__(self, query, page, per_page, total=None):
+    def __init__(self, query=None, page=None, per_page=None, total=None):
         # self.query = query
         self.per_page = per_page
         self.page = page
 
-        self.items = query.offset((self.page - 1) * self.per_page)\
-                .limit(self.per_page).all()
-
-        if total:
-            self.total = total
+        if query is not None:
+            self.items = query.offset((self.page - 1) * self.per_page).limit(self.per_page).all()
+            if total:
+                self.total = total
+            else:
+                self.total = query.count()
+            if self.page > 1 and self.page > self.pages:
+                raise tornado.web.HTTPError(404)
         else:
-            self.total = query.count()
-
-        if self.page > 1 and self.page > self.pages:
-            raise tornado.web.HTTPError(404)
+            self.items = []
+            self.total = 0
 
     def iter_pages(self, edge=4):
         if self.page <= edge:
