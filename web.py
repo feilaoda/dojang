@@ -14,7 +14,6 @@ from .util import set_default_option
 __all__ = ["DojangHandler", "ApiHandler", "init_options", "run_server"]
 
 def ignore_user_agent(user_agent):
-        print user_agent
         if user_agent:
             for ua in options.mobile_ua_ignores:
                 if ua and ua.lower() in user_agent.lower():
